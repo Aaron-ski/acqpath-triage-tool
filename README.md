@@ -2,7 +2,7 @@
 
 A dependency-free static web app that helps Government CORs, APMs, PAPMs, DPMs, PMs, acquisition managers, and product owners prepare for acquisition strategy conversations.
 
-The tool provides a plain-English recommendation to discuss one of these paths with the appropriate contracting professionals:
+The tool uses a Yes/No/Unsure checklist with weighted scoring to provide a plain-English recommendation to discuss one of these paths with the appropriate contracting professionals:
 
 - Other Transaction
 - Traditional FAR-based contract
@@ -18,6 +18,14 @@ This tool does not make official contracting determinations and does not provide
 ## Run Locally
 
 Open `index.html` in a browser. No build step or package install is required.
+
+## MVP Behavior
+
+- Dark mode is the default, with a visible light-mode toggle.
+- Each prompt uses Yes, No, or Unsure answers.
+- The recommendation panel shows the top path, secondary paths to consider, weighted fit scores, next steps, and questions to ask Contracts.
+- The one-page summary can be copied into email, Teams, a SharePoint intake form, or printed.
+- There are no internet calls, no login, and no data leaves the browser.
 
 ## SharePoint Use
 

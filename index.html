@@ -8,26 +8,29 @@
   </head>
   <body>
     <main class="app-shell">
-      <section class="intro" aria-labelledby="page-title">
-        <div>
+      <header class="intro" aria-labelledby="page-title">
+        <div class="intro-copy">
           <p class="eyebrow">Planning aid</p>
           <h1 id="page-title">Acquisition Pathway Triage Tool</h1>
           <p class="lede">
             A lightweight triage aid for CORs, APMs, PAPMs, DPMs, PMs, acquisition managers, and product owners preparing for a contracting conversation.
           </p>
         </div>
-        <aside class="disclaimer" aria-label="Important disclaimer">
-          <strong>Not an official determination.</strong>
-          This tool does not provide legal or contracting advice. Final acquisition strategy decisions must be reviewed by the Contracting Officer, Agreements Officer, legal counsel, and acquisition leadership.
-        </aside>
-      </section>
+        <div class="header-actions">
+          <button id="theme-toggle" class="secondary-button" type="button" aria-pressed="false">Light mode</button>
+          <aside class="disclaimer" aria-label="Important disclaimer">
+            <strong>Not an official determination.</strong>
+            This tool does not provide legal or contracting advice. Final acquisition strategy decisions must be reviewed by the Contracting Officer, Agreements Officer, legal counsel, and acquisition leadership.
+          </aside>
+        </div>
+      </header>
 
       <section class="workspace" aria-label="Triage workspace">
         <form id="triage-form" class="panel">
           <div class="panel-header">
             <div>
               <p class="eyebrow">Assessment</p>
-              <h2>Answer the planning questions</h2>
+              <h2>Answer Yes, No, or Unsure</h2>
             </div>
             <button class="ghost-button" type="reset">Reset</button>
           </div>
@@ -37,7 +40,8 @@
         <aside class="result-panel" aria-live="polite">
           <p class="eyebrow">Recommendation</p>
           <h2 id="result-title">Complete the assessment</h2>
-          <p id="result-summary" class="result-summary">Select the answers that best match the requirement. A recommended discussion path will appear here.</p>
+          <p id="result-summary" class="result-summary">Answer the checklist to generate a planning recommendation. No data leaves this browser.</p>
+          <div id="secondary-paths" class="secondary-paths"></div>
           <div id="score-list" class="score-list" aria-label="Pathway fit scores"></div>
           <div id="next-steps" class="next-steps"></div>
           <div class="actions">
@@ -46,6 +50,11 @@
           </div>
         </aside>
       </section>
+
+      <footer class="site-footer">
+        <strong>Source guidance reminder:</strong>
+        Treat the output as a preparation aid for an official conversation. Confirm the current authority, policy, funding rules, competition requirements, and approval chain with Contracts, legal counsel, and acquisition leadership.
+      </footer>
     </main>
     <script src="app.js"></script>
   </body>
