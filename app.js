@@ -1,292 +1,348 @@
-const pathways = {
-  ot: {
-    label: "Discuss an Other Transaction",
-    summary: "This looks like a candidate for an Other Transaction discussion, especially if the work involves prototype activity, non-traditional performers, or speed and flexibility that may not fit a standard FAR path.",
-    nextSteps: [
-      "Ask whether the requirement is a prototype, research, or follow-on production candidate.",
-      "Identify likely non-traditional defense contractors, small businesses, consortia, or performers not comfortable with standard FAR terms.",
-      "Prepare the business rationale for flexibility, speed, competition approach, data rights, IP, and transition."
-    ],
-    questions: [
-      "Does the effort qualify as prototype, research, or follow-on production under the applicable authority?",
-      "What approval level and agreements support will be required?",
-      "What safeguards are needed for data rights, IP, deliverables, cybersecurity, and transition?"
-    ]
-  },
+const paths = {
   far: {
-    label: "Discuss a FAR-based contract",
-    summary: "A traditional FAR-based contract may fit when the requirement is mature, the government can define the need clearly, and standard competition, clauses, deliverables, and oversight are appropriate.",
-    nextSteps: [
-      "Refine the performance work statement, evaluation factors, funding profile, and schedule.",
-      "Confirm market research, acquisition planning lead times, contract type options, and source-selection expectations.",
-      "Coordinate early on data rights, cybersecurity, deliverable acceptance, and government-furnished information."
-    ],
-    questions: [
-      "Is the requirement sufficiently defined for a solicitation?",
-      "Which contract type matches the technical, cost, and schedule risk profile?",
-      "What approvals, milestones, and competition requirements drive the timeline?"
-    ]
+    name: "Traditional FAR-Based Contract",
+    description: "Best fit when the requirement is mature, stable, well-defined, and suitable for standard procurement methods."
   },
-  cso: {
-    label: "Discuss a Commercial Solutions Opening",
-    summary: "A CSO discussion may be useful when the need can be framed as a problem statement and the program wants commercial solution proposals with flexible evaluation and award mechanics.",
-    nextSteps: [
-      "Translate the need into a clear problem statement and desired mission outcome.",
-      "Collect evidence that commercial solutions may exist and that solution variation is useful.",
-      "Ask Contracts whether a CSO authority or existing CSO vehicle is available."
-    ],
-    questions: [
-      "Can industry propose varied commercial approaches rather than respond to a fixed specification?",
-      "What evidence supports commercial availability?",
-      "How will demonstrations, technical merit, price, and transition potential be evaluated?"
-    ]
-  },
-  baa: {
-    label: "Discuss a Broad Agency Announcement",
-    summary: "A BAA may fit when the core need is basic or applied research and the government wants white papers or proposals for scientific or technical investigation.",
-    nextSteps: [
-      "Clarify the research objective, technical uncertainty, and expected knowledge gain.",
-      "Confirm whether a BAA exists or a new announcement is warranted.",
-      "Define proposal review criteria, technical reviewers, funding limits, and expected research deliverables."
-    ],
-    questions: [
-      "Is this primarily research rather than procurement of a defined product or service?",
-      "What scientific or technical advancement is sought?",
-      "Who will evaluate white papers and proposals?"
-    ]
-  },
-  vehicle: {
-    label: "Check existing vehicles first",
-    summary: "An existing contract vehicle may be the fastest compliant route if scope, ceiling, vendors, funding, and ordering procedures align with the requirement.",
-    nextSteps: [
-      "Search existing IDIQs, BPAs, GWACs, agency contracts, schedules, and marketplace options.",
-      "Confirm scope fit, ceiling, ordering lead time, fair opportunity rules, and vendor capabilities.",
-      "Ask Contracts whether the vehicle supports the desired competition and award approach."
-    ],
-    questions: [
-      "Is the requirement within scope of an existing vehicle?",
-      "Are qualified vendors already on the vehicle?",
-      "What ordering rules, fair opportunity requirements, and approvals apply?"
-    ]
+  existingVehicle: {
+    name: "Existing Contract Vehicle / IDIQ / BPA / GWAC",
+    description: "Best fit when speed is important and an existing vehicle already covers the requirement scope."
   },
   commercial: {
-    label: "Discuss commercial acquisition options",
-    summary: "Commercial acquisition approaches may fit when the need can be met by readily available products or services with limited customization.",
-    nextSteps: [
-      "Document market research showing commercial availability and price signals.",
-      "Clarify minimum needs, configuration limits, license terms, sustainment expectations, and cyber requirements.",
-      "Ask Contracts about commercial item procedures, purchase card, GSA, or other simplified options."
-    ],
-    questions: [
-      "Is the item or service sold in substantial quantities to the public or non-government buyers?",
-      "What customization, cybersecurity, or data terms could affect commercial treatment?",
-      "Can the need be satisfied through catalog, schedule, or simplified buying channels?"
-    ]
+    name: "Commercial Item / FAR Part 12 Style Approach",
+    description: "Best fit when the need can be met by commercial products or services already available in the marketplace."
+  },
+  csoba: {
+    name: "CSO / BAA / Innovation Solicitation",
+    description: "Best fit when the Government needs to discover solutions, invite innovative approaches, or evaluate technical concepts before committing to a specific acquisition path."
+  },
+  ot: {
+    name: "Other Transaction Discussion",
+    description: "Best fit when the effort involves prototype, experimentation, nontraditional vendors, flexible terms, iterative development, or rapid mission-focused capability delivery."
+  },
+  review: {
+    name: "Needs Contracting Officer / Agreements Officer Review",
+    description: "Use when the answers are mixed, uncertain, high-risk, or involve legal/acquisition authority questions."
   }
 };
 
-const triageQuestions = [
+const questions = [
   {
-    prompt: "Is the requirement well-defined enough to describe deliverables, acceptance criteria, and evaluation factors?",
-    help: "Yes favors a more traditional contracting path. No may point to flexible, research, or problem-statement-based paths.",
-    yes: { far: 3, vehicle: 2, commercial: 1 },
-    no: { ot: 2, cso: 2, baa: 2 },
-    unsure: { far: 1, ot: 1, cso: 1 }
+    id: "q1",
+    text: "Is the requirement already well-defined, stable, and unlikely to change?",
+    yes: { far: 3, existingVehicle: 2 },
+    no: { ot: 2, csoba: 2 },
+    unsure: { review: 2 }
   },
   {
-    prompt: "Is the main objective prototype, demonstration, experimentation, or transition learning?",
-    help: "Prototype and demonstration work often needs early Other Transaction or CSO discussion.",
-    yes: { ot: 4, cso: 2 },
-    no: { far: 2, vehicle: 1, commercial: 1 },
-    unsure: { ot: 1, cso: 1, far: 1 }
+    id: "q2",
+    text: "Is this primarily a prototype, pilot, experiment, demonstration, or new capability development effort?",
+    yes: { ot: 4, csoba: 2 },
+    no: { far: 2 },
+    unsure: { review: 2 }
   },
   {
-    prompt: "Is the main objective basic or applied research rather than buying a defined product or service?",
-    help: "Research-oriented work may belong in a BAA conversation.",
-    yes: { baa: 4, ot: 1 },
-    no: { far: 2, vehicle: 1, commercial: 1 },
-    unsure: { baa: 1, far: 1 }
+    id: "q3",
+    text: "Do you need to attract nontraditional defense contractors, startups, commercial technology firms, or vendors that may avoid FAR-based contracts?",
+    yes: { ot: 4, csoba: 2 },
+    no: { far: 1 },
+    unsure: { review: 1 }
   },
   {
-    prompt: "Do comparable commercial products or services appear to be available in the marketplace?",
-    help: "Commercial availability can support commercial acquisition procedures, CSO framing, or existing vehicle searches.",
-    yes: { commercial: 4, cso: 2, vehicle: 1 },
-    no: { far: 2, ot: 1, baa: 1 },
-    unsure: { commercial: 1, cso: 1, vehicle: 1 }
+    id: "q4",
+    text: "Is speed, iteration, and collaboration more important than a fully locked requirement at award?",
+    yes: { ot: 3, csoba: 2 },
+    no: { far: 2 },
+    unsure: { review: 2 }
   },
   {
-    prompt: "Is there a known contract vehicle, schedule, BPA, IDIQ, GWAC, or marketplace that may already cover the need?",
-    help: "If scope and vendors fit, an existing vehicle may be the fastest compliant route.",
-    yes: { vehicle: 5, far: 1 },
-    no: { far: 1, ot: 1, cso: 1, baa: 1, commercial: 1 },
-    unsure: { vehicle: 2, far: 1, commercial: 1 }
+    id: "q5",
+    text: "Does an existing contract vehicle, BPA, IDIQ, GWAC, or task order vehicle already cover the likely scope?",
+    yes: { existingVehicle: 4, far: 1 },
+    no: { ot: 1, csoba: 1 },
+    unsure: { review: 2 }
   },
   {
-    prompt: "Is speed or flexible execution more important than using a fully specified standard solicitation?",
-    help: "High urgency or uncertainty can make flexible acquisition paths worth discussing early.",
-    yes: { ot: 3, vehicle: 2, cso: 2, commercial: 1 },
-    no: { far: 3, baa: 1 },
-    unsure: { ot: 1, far: 1, vehicle: 1 }
+    id: "q6",
+    text: "Is the solution likely available commercially with minimal Government-unique development?",
+    yes: { commercial: 4, existingVehicle: 2 },
+    no: { ot: 2, csoba: 1 },
+    unsure: { review: 1 }
   },
   {
-    prompt: "Is the program trying to reach non-traditional companies, startups, consortia, or performers that may avoid standard FAR contracting?",
-    help: "Non-traditional performer interest is a strong signal to discuss Other Transaction or CSO options.",
-    yes: { ot: 4, cso: 2, commercial: 1 },
-    no: { far: 2, vehicle: 1 },
-    unsure: { ot: 1, cso: 1 }
+    id: "q7",
+    text: "Is the requirement mostly recurring services, staff augmentation, sustainment, or routine support?",
+    yes: { far: 4, existingVehicle: 3 },
+    no: { ot: 1, csoba: 1 },
+    unsure: { review: 1 }
   },
   {
-    prompt: "Can the need be framed as a problem statement where industry proposes different solution approaches?",
-    help: "Problem statements are useful for CSO, OT, and some research pathways.",
-    yes: { cso: 4, ot: 2, baa: 1 },
-    no: { far: 2, vehicle: 2, commercial: 1 },
-    unsure: { cso: 1, ot: 1, far: 1 }
+    id: "q8",
+    text: "Would you benefit from first asking industry what solutions exist before writing a detailed requirement?",
+    yes: { csoba: 3, ot: 2 },
+    no: { far: 1 },
+    unsure: { review: 1 }
+  },
+  {
+    id: "q9",
+    text: "Is there a possible follow-on production or scaling need after a successful prototype?",
+    yes: { ot: 3, review: 1 },
+    no: { csoba: 1 },
+    unsure: { review: 2 }
+  },
+  {
+    id: "q10",
+    text: "Have you already engaged a Contracting Officer, Agreements Officer, or acquisition attorney?",
+    yes: { review: 1 },
+    no: { review: 3 },
+    unsure: { review: 2 }
   }
 ];
 
-const questionsEl = document.querySelector("#questions");
+const labels = {
+  yes: "Yes",
+  no: "No",
+  unsure: "Unsure",
+  next: "Next",
+  back: "Back",
+  reset: "Start Over",
+  copySummary: "Copy Summary",
+  print: "Print Summary",
+  primary: "Primary path to discuss",
+  secondary: "Secondary paths to consider",
+  why: "This result is based on your answers",
+  nextSteps: "Recommended next steps",
+  questionsForContracts: "Questions to ask Contracts",
+  summary: "Copyable summary"
+};
+
+const standardNextSteps = [
+  "Prepare a short problem statement.",
+  "Identify mission need, desired outcome, and urgency.",
+  "Summarize known market research.",
+  "Identify whether vendors, prototypes, commercial products, or existing vehicles are already known.",
+  "Engage the Contracting Officer or Agreements Officer early.",
+  "Ask whether legal counsel or policy review is needed."
+];
+
+const questionsForContracts = [
+  "Does this requirement fit an existing contract vehicle?",
+  "Would a FAR-based approach be faster or more appropriate?",
+  "Is this requirement suitable for commercial acquisition?",
+  "Is a CSO, BAA, RFI, or sources sought appropriate before choosing a path?",
+  "Is this effort a valid candidate for an Other Transaction discussion?",
+  "Who has authority to execute the recommended path?",
+  "What documentation should the program office prepare next?"
+];
+
+const governanceWarning = "Do not include classified information, source selection information, vendor proprietary information, procurement-sensitive information, CUI, NNPI, PII, or controlled acquisition data in the MVP.";
+
+const state = {
+  currentQuestion: 0,
+  answers: {}
+};
+
 const form = document.querySelector("#triage-form");
+const wizardHeading = document.querySelector("#wizard-heading");
+const questionHost = document.querySelector("#question-host");
+const progressFill = document.querySelector("#progress-fill");
+const backButton = document.querySelector("#back-button");
+const nextButton = document.querySelector("#next-button");
+const resetButton = document.querySelector("#reset-button");
 const resultTitle = document.querySelector("#result-title");
 const resultSummary = document.querySelector("#result-summary");
 const secondaryPaths = document.querySelector("#secondary-paths");
+const whyPanel = document.querySelector("#why-panel");
 const scoreList = document.querySelector("#score-list");
 const nextSteps = document.querySelector("#next-steps");
+const summaryText = document.querySelector("#summary-text");
 const copyButton = document.querySelector("#copy-summary");
 const printButton = document.querySelector("#print-summary");
 const themeToggle = document.querySelector("#theme-toggle");
 
-function renderQuestions() {
-  questionsEl.innerHTML = triageQuestions.map((question, index) => {
-    const choices = ["yes", "no", "unsure"].map((answer) => {
-      const id = `q${index}-${answer}`;
-      const label = answer.charAt(0).toUpperCase() + answer.slice(1);
-      return `
-        <label class="choice" for="${id}">
-          <input id="${id}" type="radio" name="q${index}" value="${answer}">
-          <span>${label}</span>
-        </label>
-      `;
-    }).join("");
-
-    return `
-      <fieldset class="question">
-        <legend>${index + 1}. ${question.prompt}</legend>
-        <p class="question-help">${question.help}</p>
-        <div class="choice-grid">${choices}</div>
-      </fieldset>
-    `;
-  }).join("");
-}
-
 function getScores() {
-  const scores = Object.fromEntries(Object.keys(pathways).map((key) => [key, 0]));
-  const answers = [];
+  const scores = Object.fromEntries(Object.keys(paths).map((pathId) => [pathId, 0]));
 
-  triageQuestions.forEach((question, index) => {
-    const selected = form.querySelector(`input[name="q${index}"]:checked`);
-    if (!selected) return;
-    const answer = selected.value;
-    answers.push({ question: question.prompt, answer });
-    Object.entries(question[answer]).forEach(([key, value]) => {
-      scores[key] += value;
+  questions.forEach((question) => {
+    const answer = state.answers[question.id];
+    if (!answer) return;
+
+    Object.entries(question[answer]).forEach(([pathId, points]) => {
+      scores[pathId] += points;
     });
   });
 
-  return { scores, answers };
+  return scores;
 }
 
-function formatAnswer(answer) {
-  return answer.charAt(0).toUpperCase() + answer.slice(1);
-}
-
-function sortedScores(scores) {
-  return Object.entries(scores).sort((a, b) => {
+function getSortedScores() {
+  return Object.entries(getScores()).sort((a, b) => {
     if (b[1] !== a[1]) return b[1] - a[1];
-    return pathways[a[0]].label.localeCompare(pathways[b[0]].label);
+    return paths[a[0]].name.localeCompare(paths[b[0]].name);
   });
 }
 
-function renderResults() {
-  const { scores, answers } = getScores();
-  const answeredCount = answers.length;
-  const sorted = sortedScores(scores);
-  const maxScore = Math.max(...Object.values(scores), 1);
-  const [topKey, topScore] = sorted[0];
-  const topPathway = pathways[topKey];
-  const secondary = sorted.slice(1, 3);
+function getAnsweredCount() {
+  return Object.keys(state.answers).length;
+}
 
-  scoreList.innerHTML = sorted.map(([key, score]) => {
+function getRecommendation() {
+  const sorted = getSortedScores();
+  const primary = sorted[0];
+  const secondScore = sorted[1] ? sorted[1][1] : 0;
+  const reviewScore = getScores().review;
+  const closePaths = sorted
+    .slice(1)
+    .filter(([, score]) => primary[1] - score < 3 && score > 0)
+    .slice(0, 3);
+  const secondary = closePaths.length > 0 ? closePaths : sorted.slice(1, 3).filter(([, score]) => score > 0);
+  const isClose = primary[1] - secondScore < 3 && secondScore > 0;
+  const reviewEmphasis = reviewScore >= 5 || primary[0] === "review";
+
+  return { primary, secondary, isClose, reviewEmphasis };
+}
+
+function renderQuestion() {
+  const question = questions[state.currentQuestion];
+  const selected = state.answers[question.id];
+  const progress = ((state.currentQuestion + 1) / questions.length) * 100;
+
+  wizardHeading.textContent = `Question ${state.currentQuestion + 1} of ${questions.length}`;
+  progressFill.style.width = `${progress}%`;
+  backButton.disabled = state.currentQuestion === 0;
+  nextButton.textContent = state.currentQuestion === questions.length - 1 ? "View Recommendation" : labels.next;
+
+  questionHost.innerHTML = `
+      <fieldset class="question" tabindex="-1">
+      <legend>${question.text}</legend>
+      <div class="choice-grid">
+        ${["yes", "no", "unsure"].map((answer) => {
+          const id = `${question.id}-${answer}`;
+          return `
+            <label class="choice" for="${id}">
+              <input id="${id}" type="radio" name="${question.id}" value="${answer}" ${selected === answer ? "checked" : ""}>
+              <span>${labels[answer]}</span>
+            </label>
+          `;
+        }).join("")}
+      </div>
+    </fieldset>
+  `;
+}
+
+function renderScores() {
+  const sorted = getSortedScores();
+  const maxScore = Math.max(...sorted.map(([, score]) => score), 1);
+
+  scoreList.innerHTML = sorted.map(([pathId, score]) => {
     const percent = Math.round((score / maxScore) * 100);
     return `
       <div class="score-row">
-        <div class="score-label"><span>${pathways[key].label}</span><strong>${score}</strong></div>
+        <div class="score-label"><span>${paths[pathId].name}</span><strong>${score}</strong></div>
         <div class="score-track"><div class="score-fill" style="width: ${percent}%"></div></div>
       </div>
     `;
   }).join("");
-
-  if (answeredCount < triageQuestions.length) {
-    resultTitle.textContent = `${answeredCount} of ${triageQuestions.length} answered`;
-    resultSummary.textContent = "Answer all checklist items for the clearest recommendation. Interim weighted scores are shown below.";
-    secondaryPaths.innerHTML = "";
-    nextSteps.innerHTML = "";
-    return;
-  }
-
-  resultTitle.textContent = topPathway.label;
-  resultSummary.textContent = `${topPathway.summary} Fit score: ${topScore}. Use this as a conversation starter, not as a binding determination.`;
-  secondaryPaths.innerHTML = `
-    <h3>Secondary paths to consider</h3>
-    ${secondary.map(([key, score]) => `
-      <div class="path-chip"><strong>${pathways[key].label}</strong><br>Fit score: ${score}</div>
-    `).join("")}
-  `;
-  nextSteps.innerHTML = `
-    <section>
-      <h3>Recommended next steps</h3>
-      <ul>${topPathway.nextSteps.map((step) => `<li>${step}</li>`).join("")}</ul>
-    </section>
-    <section>
-      <h3>Questions to ask Contracts</h3>
-      <ul>${topPathway.questions.map((question) => `<li>${question}</li>`).join("")}</ul>
-    </section>
-  `;
 }
 
 function buildSummaryText() {
-  const { scores, answers } = getScores();
-  const sorted = sortedScores(scores);
-  const [topKey, topScore] = sorted[0];
-  const top = pathways[topKey];
-  const secondary = sorted.slice(1, 3);
-  const answerText = answers.map((item) => `- ${item.question}: ${formatAnswer(item.answer)}`).join("\n");
-  const scoreText = sorted.map(([key, score]) => `- ${pathways[key].label}: ${score}`).join("\n");
-  const secondaryText = secondary.map(([key, score]) => `- ${pathways[key].label}: ${score}`).join("\n");
+  const answeredCount = getAnsweredCount();
+  const sorted = getSortedScores();
+  const { primary, secondary, isClose, reviewEmphasis } = getRecommendation();
+  const [primaryPathId, primaryScore] = primary;
+  const answerLines = questions.map((question) => {
+    const answer = state.answers[question.id];
+    return `- ${question.text}: ${answer ? labels[answer] : "Not answered"}`;
+  });
+  const scoreLines = sorted.map(([pathId, score]) => `- ${paths[pathId].name}: ${score}`);
+  const secondaryLines = secondary.length > 0
+    ? secondary.map(([pathId, score]) => `- ${paths[pathId].name}: ${score}`)
+    : ["- No close secondary path identified yet."];
 
   return [
     "Acquisition Pathway Triage Tool Summary",
     "",
-    `Top recommendation: ${top.label}`,
-    `Top fit score: ${topScore}`,
-    top.summary,
+    `Answered: ${answeredCount} of ${questions.length}`,
+    `Primary path to discuss: ${paths[primaryPathId].name}`,
+    `Primary fit score: ${primaryScore}`,
+    `Recommendation language: Consider discussing whether this may be a candidate for ${paths[primaryPathId].name}.`,
+    paths[primaryPathId].description,
     "",
     "Secondary paths to consider:",
-    secondaryText || "- None",
+    ...secondaryLines,
     "",
-    "Answers:",
-    answerText || "- No answers selected",
+    labels.why + ":",
+    ...scoreLines,
     "",
-    "Weighted fit scores:",
-    scoreText,
+    isClose ? "Note: Two or more paths are close in score. Discuss the tradeoffs with Contracts before proceeding." : "Note: The primary path is separated from the next path by at least 3 points.",
+    reviewEmphasis ? "Review emphasis: Answers indicate that Contracting Officer, Agreements Officer, legal counsel, or acquisition leadership review should occur before proceeding." : "Review emphasis: Official review is still required before any acquisition strategy decision.",
     "",
-    "Recommended next steps:",
-    ...top.nextSteps.map((step) => `- ${step}`),
+    labels.nextSteps + ":",
+    ...standardNextSteps.map((step) => `- ${step}`),
     "",
-    "Questions to ask Contracts:",
-    ...top.questions.map((question) => `- ${question}`),
+    labels.questionsForContracts + ":",
+    ...questionsForContracts.map((question) => `- ${question}`),
     "",
-    "Disclaimer: This is a planning and triage aid only. Final decisions must be reviewed by the appropriate Contracting Officer, Agreements Officer, legal counsel, and acquisition leadership. No data leaves the browser."
+    "Safety warning:",
+    governanceWarning,
+    "",
+    "Disclaimer: This tool does not provide official contracting, legal, or acquisition determinations. It is a planning aid only. Official determinations must be made by the appropriate Contracting Officer, Agreements Officer, legal counsel, and acquisition leadership. No data leaves the browser."
   ].join("\n");
+}
+
+function renderRecommendation() {
+  const answeredCount = getAnsweredCount();
+  const { primary, secondary, isClose, reviewEmphasis } = getRecommendation();
+  const [primaryPathId, primaryScore] = primary;
+  const isComplete = answeredCount === questions.length;
+
+  if (!isComplete) {
+    resultTitle.textContent = `${answeredCount} of ${questions.length} answered`;
+    resultSummary.textContent = "Answer all questions to generate the clearest suggested discussion path. Interim weighted scores are shown below.";
+    secondaryPaths.innerHTML = "";
+    whyPanel.innerHTML = "";
+    nextSteps.innerHTML = "";
+  } else {
+    resultTitle.textContent = `Consider discussing: ${paths[primaryPathId].name}`;
+    resultSummary.textContent = `This may be a candidate for ${paths[primaryPathId].name}. ${paths[primaryPathId].description} Fit score: ${primaryScore}. This is not an authorization or official determination.`;
+    secondaryPaths.innerHTML = `
+      <h3>${labels.secondary}</h3>
+      ${secondary.map(([pathId, score]) => `
+        <div class="path-chip"><strong>${paths[pathId].name}</strong><br>Fit score: ${score}</div>
+      `).join("") || `<div class="path-chip">No close secondary path identified.</div>`}
+    `;
+    whyPanel.innerHTML = `
+      <h3>${labels.why}</h3>
+      <p>${isClose ? "Two or more paths are close in score, so discuss multiple options with Contracts." : "The primary path leads the next path by at least 3 points."}</p>
+      <p>${reviewEmphasis ? "The review score is high enough to emphasize early CO, AO, legal, or acquisition leadership engagement." : "Official review is still required before any acquisition strategy decision."}</p>
+    `;
+    nextSteps.innerHTML = `
+      <section>
+        <h3>${labels.nextSteps}</h3>
+        <ul>${standardNextSteps.map((step) => `<li>${step}</li>`).join("")}</ul>
+      </section>
+      <section>
+        <h3>${labels.questionsForContracts}</h3>
+        <ul>${questionsForContracts.map((question) => `<li>${question}</li>`).join("")}</ul>
+      </section>
+    `;
+  }
+
+  renderScores();
+  summaryText.value = buildSummaryText();
+}
+
+function renderApp() {
+  renderQuestion();
+  renderRecommendation();
+}
+
+function saveCurrentAnswer() {
+  const question = questions[state.currentQuestion];
+  const checked = form.querySelector(`input[name="${question.id}"]:checked`);
+  if (!checked) return false;
+
+  state.answers[question.id] = checked.value;
+  return true;
 }
 
 function setTheme(isLight) {
@@ -295,13 +351,38 @@ function setTheme(isLight) {
   themeToggle.setAttribute("aria-pressed", String(isLight));
 }
 
-renderQuestions();
-renderResults();
-setTheme(false);
+questionHost.addEventListener("change", (event) => {
+  if (event.target.matches("input[type='radio']")) {
+    saveCurrentAnswer();
+    renderRecommendation();
+  }
+});
 
-form.addEventListener("change", renderResults);
-form.addEventListener("reset", () => {
-  window.setTimeout(renderResults, 0);
+backButton.addEventListener("click", () => {
+  saveCurrentAnswer();
+  state.currentQuestion = Math.max(0, state.currentQuestion - 1);
+  renderApp();
+});
+
+nextButton.addEventListener("click", () => {
+  if (!saveCurrentAnswer()) {
+    questionHost.querySelector("fieldset").focus();
+    return;
+  }
+
+  if (state.currentQuestion < questions.length - 1) {
+    state.currentQuestion += 1;
+    renderApp();
+  } else {
+    renderRecommendation();
+    document.querySelector(".result-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+});
+
+resetButton.addEventListener("click", () => {
+  state.currentQuestion = 0;
+  state.answers = {};
+  renderApp();
 });
 
 themeToggle.addEventListener("click", () => {
@@ -309,27 +390,24 @@ themeToggle.addEventListener("click", () => {
 });
 
 copyButton.addEventListener("click", async () => {
-  const summary = buildSummaryText();
+  const summary = summaryText.value;
   try {
     await navigator.clipboard.writeText(summary);
     copyButton.textContent = "Copied";
   } catch {
-    const textArea = document.createElement("textarea");
-    textArea.value = summary;
-    textArea.setAttribute("readonly", "");
-    textArea.style.position = "fixed";
-    textArea.style.left = "-9999px";
-    document.body.appendChild(textArea);
-    textArea.select();
+    summaryText.focus();
+    summaryText.select();
     document.execCommand("copy");
-    document.body.removeChild(textArea);
     copyButton.textContent = "Copied";
   }
   window.setTimeout(() => {
-    copyButton.textContent = "Copy summary";
+    copyButton.textContent = labels.copySummary;
   }, 1600);
 });
 
 printButton.addEventListener("click", () => {
   window.print();
 });
+
+renderApp();
+setTheme(false);

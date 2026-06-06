@@ -6,6 +6,8 @@
   --panel: #102333;
   --panel-soft: #132b3f;
   --page: #071723;
+  --track: #25384a;
+  --choice-selected: #17394b;
   --accent: #1ba7c5;
   --accent-dark: #1386a0;
   --warn: #ffe3a3;
@@ -22,6 +24,8 @@ body.light-mode {
   --panel: #ffffff;
   --panel-soft: #f7f9fb;
   --page: #eef2f6;
+  --track: #d9e2ea;
+  --choice-selected: #e5f3f7;
   --accent: #116a83;
   --accent-dark: #0d5265;
   --warn: #704700;
@@ -155,6 +159,28 @@ h3 {
   margin-bottom: 18px;
 }
 
+.instructions {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.progress-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--track);
+  margin-bottom: 18px;
+}
+
+.progress-fill {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 160ms ease;
+}
+
 button {
   min-height: 44px;
   border: 0;
@@ -167,6 +193,11 @@ button {
 
 button:hover {
   background: var(--accent-dark);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .ghost-button,
@@ -188,18 +219,18 @@ button:hover {
 }
 
 .question {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.question:first-child {
-  border-top: 0;
-  padding-top: 0;
+  min-height: 190px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  background: var(--panel-soft);
 }
 
 .question legend {
-  margin-bottom: 10px;
+  padding-top: 18px;
+  margin-bottom: 16px;
   font-weight: 700;
+  line-height: 1.35;
 }
 
 .question-help {
@@ -229,7 +260,7 @@ button:hover {
 
 .choice:has(input:checked) {
   border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 16%, var(--panel));
+  background: var(--choice-selected);
 }
 
 .choice input {
@@ -256,6 +287,17 @@ button:hover {
   line-height: 1.45;
 }
 
+.wizard-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.wizard-actions button {
+  min-width: 110px;
+}
+
 .secondary-paths {
   display: grid;
   gap: 8px;
@@ -273,6 +315,18 @@ button:hover {
 
 .path-chip strong {
   color: var(--ink);
+}
+
+.why-panel {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.why-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
 }
 
 .score-list {
@@ -298,7 +352,7 @@ button:hover {
   height: 9px;
   overflow: hidden;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--line) 65%, var(--page));
+  background: var(--track);
 }
 
 .score-fill {
@@ -317,6 +371,24 @@ button:hover {
   padding-left: 20px;
   color: var(--muted);
   line-height: 1.45;
+}
+
+.copyable-summary {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.copyable-summary textarea {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px;
+  color: var(--ink);
+  background: var(--panel-soft);
+  line-height: 1.4;
 }
 
 .actions {
@@ -355,6 +427,7 @@ button:hover {
   }
 
   .panel-header,
+  .wizard-actions,
   .actions {
     display: grid;
   }
@@ -374,6 +447,8 @@ button:hover {
     --panel: #ffffff;
     --panel-soft: #ffffff;
     --page: #ffffff;
+    --track: #d8dde6;
+    --choice-selected: #ffffff;
     --accent: #116a83;
     --warn: #704700;
     --warn-bg: #ffffff;
