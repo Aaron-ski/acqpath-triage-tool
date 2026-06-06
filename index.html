@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Acquisition Pathway Triage Tool</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Planning aid</p>
+          <h1 id="page-title">Acquisition Pathway Triage Tool</h1>
+          <p class="lede">
+            A lightweight triage aid for CORs, APMs, PAPMs, DPMs, PMs, acquisition managers, and product owners preparing for a contracting conversation.
+          </p>
+        </div>
+        <aside class="disclaimer" aria-label="Important disclaimer">
+          <strong>Not an official determination.</strong>
+          This tool does not provide legal or contracting advice. Final acquisition strategy decisions must be reviewed by the Contracting Officer, Agreements Officer, legal counsel, and acquisition leadership.
+        </aside>
+      </section>
+
+      <section class="workspace" aria-label="Triage workspace">
+        <form id="triage-form" class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Assessment</p>
+              <h2>Answer the planning questions</h2>
+            </div>
+            <button class="ghost-button" type="reset">Reset</button>
+          </div>
+          <div id="questions" class="questions"></div>
+        </form>
+
+        <aside class="result-panel" aria-live="polite">
+          <p class="eyebrow">Recommendation</p>
+          <h2 id="result-title">Complete the assessment</h2>
+          <p id="result-summary" class="result-summary">Select the answers that best match the requirement. A recommended discussion path will appear here.</p>
+          <div id="score-list" class="score-list" aria-label="Pathway fit scores"></div>
+          <div id="next-steps" class="next-steps"></div>
+          <div class="actions">
+            <button id="copy-summary" type="button">Copy summary</button>
+            <button id="print-summary" type="button" class="secondary-button">Print</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
