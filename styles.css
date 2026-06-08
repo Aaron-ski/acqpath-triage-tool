@@ -64,7 +64,7 @@ input:focus-visible {
 
 .intro {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 22px;
   align-items: start;
   margin-bottom: 22px;
@@ -75,8 +75,31 @@ input:focus-visible {
 }
 
 .header-actions {
-  display: grid;
+  display: flex;
+  align-items: start;
+  justify-content: end;
   gap: 12px;
+}
+
+.disclaimer-jump {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--warn);
+  background: var(--warn-bg);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.disclaimer-jump:hover,
+.disclaimer-jump:focus-visible {
+  color: var(--page);
+  background: var(--warn);
+  outline: none;
 }
 
 .eyebrow {
@@ -133,6 +156,7 @@ h3 {
 }
 
 .disclaimer {
+  margin-top: 22px;
   padding: 18px;
   background: var(--warn-bg);
   color: var(--warn);
